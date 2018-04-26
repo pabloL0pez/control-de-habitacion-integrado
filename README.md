@@ -1,1 +1,1 @@
-# control-de-habitacion-integrado
+Control de habitación integrado
