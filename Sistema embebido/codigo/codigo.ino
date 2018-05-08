@@ -22,7 +22,7 @@ int codigoRFID;
 
 void setup()
 {
-	pinMode(SNSR_MAGNETICO,INPUT);
+  pinMode(SNSR_MAGNETICO,INPUT);
   pinMode(PESTILLO,OUTPUT);
 }
 
