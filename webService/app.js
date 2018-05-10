@@ -39,7 +39,7 @@ mongoose.connect('mongodb://' + process.env.MONGODB_HOST + ':' + process.env.MON
         logger.info('success mongoose connection.');
     })
     .catch((error) => {
-        logger.error('Error mongoose connection: ', error);
+        logger.warn('Mongodb no conectado, no se va a usar')
     });
 
 
