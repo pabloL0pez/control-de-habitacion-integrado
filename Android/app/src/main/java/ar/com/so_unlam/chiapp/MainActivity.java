@@ -7,16 +7,27 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener{
+
+
 
     private SensorManager adminSensores; //
     private Button botonEstado;
     private Button botonLog;
 
+    // Variables para el acelerómetro.
+    private static final int UMBRAL_SACUDIDA = 15;
+    private static final int UMBRAL_ACTUALIZACION = 100;
+    private long tiempoUltimaActualizacion;
+    private float ultimoX;
+    private float ultimoY;
+    private float ultimoZ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +73,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onStop();
     }
 
+    /*
+    Este método es el que se encarga de iniciar las activitys correspondientes al botón que haya sido presionado.
+     */
     @Override
     public void onClick(View vista) {
         switch(vista.getId()) {
+
             case R.id.botonEstado:
                 Intent intentEstado = new Intent(this, EstadoActivity.class);
                 startActivity(intentEstado);
                 break;
+
             case R.id.botonLog:
                 Intent intentLog = new Intent(this, LogActivity.class);
                 startActivity(intentLog);
@@ -127,10 +143,34 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     /*
-    Este método define que hace la aplicación al activarse el acelerómetro.
+    Este método define que hace la aplicación al activarse el acelerómetro (en este caso un shake).
      */
     private void funcionalidadAcelerometro(SensorEvent evento) {
+        float x, y, z;
+        double moduloAceleracionAnterior, moduloAceleracionActual, velocidad;
+        long tiempoActual = System.currentTimeMillis();
+        long diferenciaDeTiempo = tiempoActual - tiempoUltimaActualizacion;
 
+        if (diferenciaDeTiempo > UMBRAL_ACTUALIZACION) {
+
+            tiempoUltimaActualizacion = tiempoActual;
+
+            x = evento.values[0];
+            y = evento.values[1];
+            z = evento.values[2];
+
+            moduloAceleracionActual = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+            moduloAceleracionAnterior = Math.sqrt(Math.pow(this.ultimoX, 2) + Math.pow(this.ultimoY, 2) + Math.pow(this.ultimoZ, 2));
+
+            velocidad = Math.abs(moduloAceleracionActual - moduloAceleracionAnterior) / diferenciaDeTiempo * 1000;
+
+            if (velocidad > UMBRAL_SACUDIDA) {
+                encenderLuces(velocidad);
+            }
+            this.ultimoX = x;
+            this.ultimoY = y;
+            this.ultimoZ = z;
+        }
     }
 
     /*
@@ -146,4 +186,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void funcionalidadProximidad(SensorEvent evento) {
 
     }
+
+    /*
+    Este método enciende las luces de la habitación.
+     */
+    private void encenderLuces(double velocidad) {
+        Log.d("Acelerómetro", "Se detectó una sacudida con una velocidad de: " + velocidad);
+        Toast.makeText(this, "Se detectó una sacudida con una velocidad de: " + velocidad, Toast.LENGTH_SHORT).show();
+    }
 }
+
+    /*
+     x = evento.values[0];
+     y = evento.values[1];
+     z = evento.values[2];
+
+     velocidad = Math.abs((x + y + z) - this.ultimoX - this.ultimoY - this.ultimoZ) / diferenciaDeTiempo * 10000;
+     */
