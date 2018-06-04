@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener{
@@ -22,8 +21,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button botonLog;
 
     // Variables para el acelerómetro.
-    private static final int UMBRAL_SACUDIDA = 15;
-    private static final int UMBRAL_ACTUALIZACION = 100;
+    private static final int UMBRAL_SACUDIDA = 70; // Velocidad mínima para ser considerada sacudida (m/s).
+    private static final int UMBRAL_ACTUALIZACION = 150; // Intervalo de tiempo para el cual se va a chequear una sacudida (mseg).
     private long tiempoUltimaActualizacion;
     private float ultimoX;
     private float ultimoY;
@@ -165,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             velocidad = Math.abs(moduloAceleracionActual - moduloAceleracionAnterior) / diferenciaDeTiempo * 1000;
 
             if (velocidad > UMBRAL_SACUDIDA) {
-                encenderLuces(velocidad);
+                desbloquearPuerta(velocidad);
             }
             this.ultimoX = x;
             this.ultimoY = y;
@@ -190,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
     Este método enciende las luces de la habitación.
      */
-    private void encenderLuces(double velocidad) {
+    private void desbloquearPuerta(double velocidad) {
         Log.d("Acelerómetro", "Se detectó una sacudida con una velocidad de: " + velocidad);
         Toast.makeText(this, "Se detectó una sacudida con una velocidad de: " + velocidad, Toast.LENGTH_SHORT).show();
     }
