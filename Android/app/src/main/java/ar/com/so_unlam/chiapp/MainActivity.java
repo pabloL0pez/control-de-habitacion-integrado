@@ -7,18 +7,23 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener{
 
-
-
     private SensorManager adminSensores; //
     private Button botonEstado;
     private Button botonLog;
+    private Switch switchLuz;
+
+    // Borrarlas despues
+    private TextView orientacionEnX;
+    private TextView orientacionEnY;
+    private TextView orientacionEnZ;
 
     // Variables para el acelerómetro.
     private static final int UMBRAL_SACUDIDA = 70; // Velocidad mínima para ser considerada sacudida (m/s).
@@ -38,8 +43,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         botonEstado = findViewById(R.id.botonEstado);
         botonLog = findViewById(R.id.botonLog);
+
         botonEstado.setOnClickListener(this);
         botonLog.setOnClickListener(this);
+
+        switchLuz = findViewById(R.id.switchLuz);
+
+        orientacionEnX = findViewById(R.id.orientacionX);
+        orientacionEnY = findViewById(R.id.orientacionY);
+        orientacionEnZ = findViewById(R.id.orientacionZ);
+
     }
 
     @Override
@@ -88,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 Intent intentLog = new Intent(this, LogActivity.class);
                 startActivity(intentLog);
                 break;
+
         }
     }
 
@@ -176,14 +190,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método define que hace la aplicación al activarse el sensor de orientación.
      */
     private void funcionalidadOrientacion(SensorEvent evento) {
-
+        if (switchLuz.isChecked()) {
+            orientacionEnX.setText("" + evento.values[0]);
+            orientacionEnY.setText("" + evento.values[1]);
+            orientacionEnZ.setText("" + evento.values[2]);
+        }
     }
 
     /*
     Este método define que hace la aplicación al activarse el sensor de proximidad.
      */
     private void funcionalidadProximidad(SensorEvent evento) {
-        encenderLuces(evento.values[0]);
+        if (evento.values[0] > 1) {
+            encenderLuces(evento.values[0]);
+        }
     }
 
     /*
