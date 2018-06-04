@@ -6,6 +6,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -104,14 +105,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         adminSensores.unregisterListener((SensorEventListener) this, adminSensores.getDefaultSensor(Sensor.TYPE_PROXIMITY));
     }
 
+    /*
+    Este método define que hace la aplicación al activarse el acelerómetro.
+     */
     private void funcionalidadAcelerometro(SensorEvent evento) {
 
     }
 
+    /*
+    Este método define que hace la aplicación al activarse el sensor de orientación.
+     */
     private void funcionalidadOrientacion(SensorEvent evento) {
 
     }
 
+    /*
+    Este método define que hace la aplicación al activarse el sensor de proximidad.
+     */
     private void funcionalidadProximidad(SensorEvent evento) {
 
     }
