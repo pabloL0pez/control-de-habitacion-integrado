@@ -183,15 +183,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método define que hace la aplicación al activarse el sensor de proximidad.
      */
     private void funcionalidadProximidad(SensorEvent evento) {
+        encenderLuces(evento.values[0]);
+    }
 
+    /*
+    Este método desbloquea la puerta de la habitación.
+     */
+    private void desbloquearPuerta(double velocidad) {
+        Toast.makeText(this, "Se detectó una sacudida con una velocidad de: " + velocidad, Toast.LENGTH_SHORT).show();
     }
 
     /*
     Este método enciende las luces de la habitación.
      */
-    private void desbloquearPuerta(double velocidad) {
-        Log.d("Acelerómetro", "Se detectó una sacudida con una velocidad de: " + velocidad);
-        Toast.makeText(this, "Se detectó una sacudida con una velocidad de: " + velocidad, Toast.LENGTH_SHORT).show();
+    private void encenderLuces(float distancia) {
+        Toast.makeText(this, "Sensor de proximidad: " + distancia, Toast.LENGTH_SHORT).show();
     }
 }
 
@@ -201,4 +207,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      z = evento.values[2];
 
      velocidad = Math.abs((x + y + z) - this.ultimoX - this.ultimoY - this.ultimoZ) / diferenciaDeTiempo * 10000;
+
+      Log.d("Acelerómetro", "Se detectó una sacudida con una velocidad de: " + velocidad);
      */
+
