@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CHIApp</string>
+    <string name="estado_name">Estado de la habitación</string>
+    <string name="log_name">Log de acceso</string>
 </resources>

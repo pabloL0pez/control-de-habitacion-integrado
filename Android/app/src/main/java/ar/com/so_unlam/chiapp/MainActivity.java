@@ -1,5 +1,6 @@
 package ar.com.so_unlam.chiapp;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -7,28 +8,34 @@ import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.HashMap;
-import java.util.function.Function;
+public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener{
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener{
+    private SensorManager adminSensores; //
+    private Button botonEstado;
+    private Button botonLog;
 
-    private SensorManager adminSensores; // Sensor Manager para obtener el servicio de sensores.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        setTitle("CHIApp");
+
         adminSensores = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        setContentView(R.layout.activity_main);
+        botonEstado = findViewById(R.id.botonEstado);
+        botonLog = findViewById(R.id.botonLog);
+        botonEstado.setOnClickListener(this);
+        botonLog.setOnClickListener(this);
     }
 
     @Override
     protected void onRestart() {
         inicializarSensores();
         super.onRestart();
-
     }
 
     @Override
@@ -53,6 +60,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onStop() {
         pararSensores();
         super.onStop();
+    }
+
+    @Override
+    public void onClick(View vista) {
+        switch(vista.getId()) {
+            case R.id.botonEstado:
+                Intent intentEstado = new Intent(this, EstadoActivity.class);
+                startActivity(intentEstado);
+                break;
+            case R.id.botonLog:
+                Intent intentLog = new Intent(this, LogActivity.class);
+                startActivity(intentLog);
+                break;
+        }
     }
 
     /*
@@ -125,5 +146,4 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void funcionalidadProximidad(SensorEvent evento) {
 
     }
-
 }
