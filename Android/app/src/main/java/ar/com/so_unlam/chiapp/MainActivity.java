@@ -20,11 +20,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button botonLog;
     private Switch switchLuz;
 
-    // Borrarlas despues
-    private TextView orientacionEnX;
-    private TextView orientacionEnY;
-    private TextView orientacionEnZ;
-
     // Variables para el acelerómetro.
     private static final int UMBRAL_SACUDIDA = 70; // Velocidad mínima para ser considerada sacudida (m/s).
     private static final int UMBRAL_ACTUALIZACION = 150; // Intervalo de tiempo para el cual se va a chequear una sacudida (mseg).
@@ -48,10 +43,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         botonLog.setOnClickListener(this);
 
         switchLuz = findViewById(R.id.switchLuz);
-
-        orientacionEnX = findViewById(R.id.orientacionX);
-        orientacionEnY = findViewById(R.id.orientacionY);
-        orientacionEnZ = findViewById(R.id.orientacionZ);
 
     }
 
@@ -156,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     /*
-    Este método define que hace la aplicación al activarse el acelerómetro (en este caso un shake).
+    Este método calcular el valor del acelerometro para detectar si hubo o no un shake, y en base a esto desbloquea o no la puerta.
      */
     private void funcionalidadAcelerometro(SensorEvent evento) {
         float x, y, z;
@@ -187,13 +178,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     /*
-    Este método define que hace la aplicación al activarse el sensor de orientación.
+    Este método verifica el angulo de orientación en el eje X del teléfono y en base a esto define el porcentaje de intensidad que va a tener la luz.
      */
     private void funcionalidadOrientacion(SensorEvent evento) {
+        float anguloEnX = evento.values[0];
+        float valorMaximo = (float)-(Math.PI)*1/2;
         if (switchLuz.isChecked()) {
-            orientacionEnX.setText("" + evento.values[0]);
-            orientacionEnY.setText("" + evento.values[1]);
-            orientacionEnZ.setText("" + evento.values[2]);
+            if (anguloEnX < valorMaximo * 0 && anguloEnX > valorMaximo * 0.20) {
+                modificarIntensidadLuz((float) 0);
+            }
+            if (anguloEnX < valorMaximo * 0.20 && anguloEnX > valorMaximo * 0.40) {
+                modificarIntensidadLuz((float) 0.25);
+            }
+            if (anguloEnX < valorMaximo * 0.40 && anguloEnX > valorMaximo * 0.60) {
+                modificarIntensidadLuz((float) 0.50);
+            }
+            if (anguloEnX < valorMaximo * 0.60 && anguloEnX > valorMaximo * 0.80) {
+                modificarIntensidadLuz((float) 0.75);
+            }
+            if (anguloEnX < valorMaximo * 0.80 && anguloEnX > valorMaximo * 1.00) {
+                modificarIntensidadLuz((float) 1.0);
+            }
         }
     }
 
@@ -218,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void encenderLuces(float distancia) {
         Toast.makeText(this, "Sensor de proximidad: " + distancia, Toast.LENGTH_SHORT).show();
+    }
+
+    /*
+    Este método modifica el porcentaje de intensidad de las luces.
+     */
+    private void modificarIntensidadLuz(float porcentaje) {
+        Toast.makeText(this, "El porcentaje de intensidad de la luz es del " + porcentaje*100 + "%", Toast.LENGTH_SHORT).show();
     }
 }
 
