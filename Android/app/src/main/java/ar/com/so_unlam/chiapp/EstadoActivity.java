@@ -10,5 +10,4 @@ public class EstadoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estado);
     }
-
 }

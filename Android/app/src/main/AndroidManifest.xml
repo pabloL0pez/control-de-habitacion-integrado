@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ar.com.so_unlam.chiapp">
 
+    <uses-permission android:name="android.permission.CAMERA"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,6 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".EstadoActivity"
             android:label="@string/estado_name">
@@ -25,6 +28,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".LogActivity"
             android:label="@string/log_name">
@@ -33,6 +37,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-    </application>
 
+        <activity
+            android:name=".CodigoQrActivity"
+            android:label="@string/qr_name">
+            <intent-filter>
+                <action android:name="ar.com.so_unlam.chiapp.CodigoQrActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="com.google.android.gms.vision.DEPENDENCIES"
+                android:value="barcode">
+            </meta-data>
+        </activity>
+
+    </application>
 </manifest>

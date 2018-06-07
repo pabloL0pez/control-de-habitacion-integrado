@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener{
@@ -89,10 +88,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 break;
 
             case R.id.botonLog:
-                Intent intentLog = new Intent(this, LogActivity.class);
-                startActivity(intentLog);
+                Toast.makeText(this, "pasa por aca", Toast.LENGTH_SHORT).show();
+                Intent intentCodigoQr = new Intent(this, CodigoQrActivity.class);
+                startActivity(intentCodigoQr);
+                //Toast.makeText(this, "pasa por aca", Toast.LENGTH_SHORT).show();
+                //Intent intentLog = new Intent(this, LogActivity.class);
+                //startActivity(intentLog);
                 break;
 
+            case R.id.botonQR:
+                Toast.makeText(this, "pasa por aca", Toast.LENGTH_SHORT).show();
+                //Intent intentCodigoQr = new Intent(this, CodigoQrActivity.class);
+                //startActivity(intentCodigoQr);
+                break;
         }
     }
 
@@ -222,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método enciende las luces de la habitación.
      */
     private void encenderLuces(float distancia) {
-        Toast.makeText(this, "Sensor de proximidad: " + distancia, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Sensor de proximidad: " + distancia, Toast.LENGTH_SHORT).show();
     }
 
     /*
