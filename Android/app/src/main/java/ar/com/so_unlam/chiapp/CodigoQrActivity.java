@@ -1,6 +1,7 @@
 package ar.com.so_unlam.chiapp;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -22,10 +23,14 @@ import java.io.IOException;
 public class CodigoQrActivity extends AppCompatActivity {
 
     private static final int PEDIR_PERMISOS_CAMARA = 201;
+    private static final int ANCHO_CAMARA = 400;
+    private static final int ALTO_CAMARA = 400;
 
     private SurfaceView vistaCamara;
     private TextView codigoQr;
     private CameraSource camara;
+
+    private boolean codigoDetectado = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +41,8 @@ public class CodigoQrActivity extends AppCompatActivity {
         codigoQr = findViewById(R.id.codigoQr);
 
         BarcodeDetector detectorCodigo = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.QR_CODE).build();
-        camara = new CameraSource.Builder(this, detectorCodigo).setRequestedPreviewSize(400, 400).build();
-        // vistaCamara.getLayoutParams().width
-        // vistaCamara.getLayoutParams().height
+        camara = new CameraSource.Builder(this, detectorCodigo).setRequestedPreviewSize(ANCHO_CAMARA, ALTO_CAMARA).build();
+
         vistaCamara.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -76,11 +80,20 @@ public class CodigoQrActivity extends AppCompatActivity {
 
                     codigoQr.post(() -> {
                         String valor = codigos.valueAt(0).displayValue;
-                        if (valor != null) {
-                            codigoQr.removeCallbacks(null);
-                            codigoQr.setText(valor);
+                        if (codigoDetectado) {
+                            Intent intentMain = new Intent(CodigoQrActivity.this, MainActivity.class);
+                            intentMain.putExtra("codigoQr", valor);
+                            startActivity(intentMain);
+                            finish();
+                            return;
                         } else {
-                            codigoQr.setText(R.string.default_qr_text);
+                            if (valor != null) {
+                                codigoQr.removeCallbacks(null);
+                                codigoQr.setText(R.string.detected_qr_code);
+                                codigoDetectado = true;
+                            } else {
+                                codigoQr.setText(R.string.default_qr_text);
+                            }
                         }
                     });
                 }

@@ -10,13 +10,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener{
 
     private SensorManager adminSensores; //
-    private Button botonEstado;
-    private Button botonLog;
     private Switch switchLuz;
 
     // Variables para el acelerómetro.
@@ -33,16 +32,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
         setTitle("CHIApp");
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            TextView valorCodigoQr = findViewById(R.id.valorCodigoQr);
+            valorCodigoQr.setText(extras.getString("codigoQr"));
+        }
+
         adminSensores = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        botonEstado = findViewById(R.id.botonEstado);
-        botonLog = findViewById(R.id.botonLog);
+        Button botonEstado = findViewById(R.id.botonEstado);
+        Button botonLog = findViewById(R.id.botonLog);
+        Button botonQr = findViewById(R.id.botonQR);
 
         botonEstado.setOnClickListener(this);
         botonLog.setOnClickListener(this);
+        botonQr.setOnClickListener(this);
 
         switchLuz = findViewById(R.id.switchLuz);
-
     }
 
     @Override
@@ -88,18 +94,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 break;
 
             case R.id.botonLog:
-                Toast.makeText(this, "pasa por aca", Toast.LENGTH_SHORT).show();
-                Intent intentCodigoQr = new Intent(this, CodigoQrActivity.class);
-                startActivity(intentCodigoQr);
-                //Toast.makeText(this, "pasa por aca", Toast.LENGTH_SHORT).show();
-                //Intent intentLog = new Intent(this, LogActivity.class);
-                //startActivity(intentLog);
+                Intent intentLog = new Intent(this, LogActivity.class);
+                startActivity(intentLog);
                 break;
 
             case R.id.botonQR:
-                Toast.makeText(this, "pasa por aca", Toast.LENGTH_SHORT).show();
-                //Intent intentCodigoQr = new Intent(this, CodigoQrActivity.class);
-                //startActivity(intentCodigoQr);
+                Intent intentCodigoQr = new Intent(this, CodigoQrActivity.class);
+                startActivity(intentCodigoQr);
                 break;
         }
     }
@@ -140,18 +141,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método lo que hace es inicializar los listener de los 3 sensores que vamos a usar: acelerómetro, de movimiento y de proximidad.
      */
     private void inicializarSensores() {
-        adminSensores.registerListener((SensorEventListener) this, adminSensores.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        adminSensores.registerListener((SensorEventListener) this, adminSensores.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL);
-        adminSensores.registerListener((SensorEventListener) this, adminSensores.getDefaultSensor(Sensor.TYPE_PROXIMITY), SensorManager.SENSOR_DELAY_NORMAL);
+        adminSensores.registerListener(this, adminSensores.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        adminSensores.registerListener(this, adminSensores.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_NORMAL);
+        adminSensores.registerListener(this, adminSensores.getDefaultSensor(Sensor.TYPE_PROXIMITY), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     /*
     Este método lo que hace es desactivar los listener de los 3 sensores que vamos a usar: acelerómetro, de movimiento y de proximidad.
      */
     private void pararSensores() {
-        adminSensores.unregisterListener((SensorEventListener) this, adminSensores.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
-        adminSensores.unregisterListener((SensorEventListener) this, adminSensores.getDefaultSensor(Sensor.TYPE_ORIENTATION));
-        adminSensores.unregisterListener((SensorEventListener) this, adminSensores.getDefaultSensor(Sensor.TYPE_PROXIMITY));
+        adminSensores.unregisterListener(this, adminSensores.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
+        adminSensores.unregisterListener(this, adminSensores.getDefaultSensor(Sensor.TYPE_ORIENTATION));
+        adminSensores.unregisterListener(this, adminSensores.getDefaultSensor(Sensor.TYPE_PROXIMITY));
     }
 
     /*

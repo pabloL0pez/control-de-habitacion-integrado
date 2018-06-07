@@ -3,5 +3,6 @@
     <string name="estado_name">Estado de la habitación</string>
     <string name="log_name">Log de acceso</string>
     <string name="qr_name">Lectura de código QR</string>
-    <string name="default_qr_text">Absolutely nothing</string>
+    <string name="default_qr_text">No se ha detectado ningún código</string>
+    <string name="detected_qr_code">Código detectado!</string>
 </resources>
