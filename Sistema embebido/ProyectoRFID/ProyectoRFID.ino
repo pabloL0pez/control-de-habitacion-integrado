@@ -19,7 +19,7 @@ D13:  -----
 A0:   LDR
 A1:   PIR
 A2:   BUTTON
-A3:   -----
+A3:   Magnetico
 A4:   -----
 A5:   -----
 A6:   -----
@@ -32,7 +32,8 @@ A7:   -----
 #include <SPI.h>
 #include "funciones.h"
 
-#define PUERTA_OUT 4
+// definicion de los pines del arduino
+#define DOOR_OUT 4
 #define ALARM_OUT 5
 #define LED_LIGHT_OUT 6
 #define LED_GREEN_OUT 7
@@ -44,8 +45,22 @@ A7:   -----
 #define PIR_IN A1
 #define LDR_IN A0
 #define BUTTON_IN A2
+#define DOOR_IN A3
+
+// definiciones para el los intervalos de tiempo
+#define TIME_INTERVAL_INFO 2      //Tiempo de envio de informacion de sensores
+#define TIME_INTERVAL_ACTION 1    //Tiempo de consulta de acciones
+#define TIME_INTERVAL_UNLOCK 30   //Tiempo de espera para volver a bloquear puerta
+#define TIME_INTERVAL_ALARM 30    //Tiempo de espera para sonar alarma
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); //Creamos el objeto para el RC522
+
+bool puertaAbierta = false;
+bool puertaDesbloqueada = false;
+// array con las acciones externas recividas. si es negativo no hago nada
+//accionesExternas[0] -> Desbloqueo de puerta
+//accionesExternas[1] -> Luz habitacion
+byte accionesExternas[] = {-1, -1}; 
 
 void setup() {
   // put your setup code here, to run once:
@@ -54,11 +69,52 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+
+  unsigned long currentMillis = millis();
+  // Leo si tengo alguna tarjeta para leer
   String lectura = leerRFID(mfrc522);
   if(lectura.length() > 1){
-    consultarRFID(lectura);
+    if(consultarRFID(lectura)){
+      desbloquearPuerta();
+      puertaDesbloqueada = true;
+    }
   }
+
+  if(false){ //paso el tiempo para revisar las acciones
+    if(consultarAccionesRemotas(accionesExternas)){
+      if(accionesExternas[0] == 1 && !puertaDesbloqueada){
+        desbloquearPuerta();
+        puertaDesbloqueada = true;
+      }
+      if(accionesExternas[1]> -1 ){
+        manejarLuz(accionesExternas[1]);
+      }
+    }
+  }
+
+  if(false){ //paso el tiempo para enviar informacion de sensores
+    leerSensores();
+  }
+
+  bool lectPuerta = digitalRead(DOOR_IN);
+
+  if(puertaDesbloqueada){
+    
+    if(!puertaAbierta){
+      if(lectPuerta){ // si justo se abrio la puerta cuando se penso que estaba cerrada
+        puertaAbierta = true;
+        bloquearPuerta();
+        puertaDesbloqueada = false
+      }
+    }else if(false){ // si despues de un tiempo de estar desbloqueada la puerta 
+        
+      }
+    
+  }
+
+  
+
+  
 
   
   
