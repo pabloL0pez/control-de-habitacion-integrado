@@ -106,10 +106,16 @@ void loop() {
         bloquearPuerta();
         puertaDesbloqueada = false
       }
-    }else if(false){ // si despues de un tiempo de estar desbloqueada la puerta 
-        
-      }
+    } 
+    if(false){ // si despues de un tiempo de estar desbloqueada la puerta la bloqueamos
+        bloquearPuerta();
+        puertaDesbloqueada = false
+    }
     
+  }
+
+  if(puertaAbierta && false){ //si despues de un tiempo de estar la puerta abierta hacemos sonar la alarma
+    //suena alarma
   }
 
   
