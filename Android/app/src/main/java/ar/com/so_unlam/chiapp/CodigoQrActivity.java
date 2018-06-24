@@ -82,8 +82,7 @@ public class CodigoQrActivity extends AppCompatActivity {
                         String valor = codigos.valueAt(0).displayValue;
                         if (codigoDetectado) {
                             Intent intentMain = new Intent(CodigoQrActivity.this, MainActivity.class);
-                            intentMain.putExtra("codigoQr", valor);
-                            startActivity(intentMain);
+                            new QRCodeAsyncTask(getApplicationContext(), intentMain).execute(valor);
                             finish();
                             return;
                         } else {

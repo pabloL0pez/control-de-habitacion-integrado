@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float ultimoX;
     private float ultimoY;
     private float ultimoZ;
+    private String habitacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (extras != null) {
             TextView valorCodigoQr = findViewById(R.id.valorCodigoQr);
             valorCodigoQr.setText(extras.getString("codigoQr"));
+            habitacion = extras.getString("habitacion");
         }
 
         adminSensores = (SensorManager) getSystemService(SENSOR_SERVICE);
