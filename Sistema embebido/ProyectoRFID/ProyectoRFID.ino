@@ -20,83 +20,130 @@ A0:   LDR
 A1:   PIR
 A2:   BUTTON
 A3:   Magnetico
-A4:   -----
+A4:   Testigo Pir
 A5:   -----
 A6:   -----
 A7:   -----
-
-
-
-
 */
-#include <SPI.h>
+
+
 #include "funciones.h"
 
-// definicion de los pines del arduino
-#define DOOR_OUT 4
-#define ALARM_OUT 5
-#define LED_LIGHT_OUT 6
-#define LED_GREEN_OUT 7
-#define LED_RED_OUT 8
-
-#define RST_PIN  9    //Pin 9 para el reset del RC522
-#define SS_PIN  10   //Pin 10 para el SS (SDA) del RC522
-
-#define PIR_IN A1
-#define LDR_IN A0
-#define BUTTON_IN A2
-#define DOOR_IN A3
-
-// definiciones para el los intervalos de tiempo
-#define TIME_INTERVAL_INFO 2      //Tiempo de envio de informacion de sensores
-#define TIME_INTERVAL_ACTION 1    //Tiempo de consulta de acciones
-#define TIME_INTERVAL_UNLOCK 30   //Tiempo de espera para volver a bloquear puerta
-#define TIME_INTERVAL_ALARM 30    //Tiempo de espera para sonar alarma
+#define SSIDNAME "SOA-ACCESO"
+#define PASSWORD "soa123456"
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); //Creamos el objeto para el RC522
 
+SoftwareSerial softSerial(2, 3); // RX | TX
+ESP8266 wifi(softSerial);
+
+
+
+bool sirenaSonando = false;
 bool puertaAbierta = false;
 bool puertaDesbloqueada = false;
 // array con las acciones externas recividas. si es negativo no hago nada
 //accionesExternas[0] -> Desbloqueo de puerta
 //accionesExternas[1] -> Luz habitacion
-byte accionesExternas[] = {-1, -1}; 
+//int accionesExternas[] = {-1, -1}; 
+int accionesExternas[] = {-1, -1}; 
+unsigned long doorUnlockMillis = 0;
+unsigned long actionReciveMillis = 3000;
+//unsigned long sensorSendMillis = 3000;
+unsigned long currentMillis = 0;
+byte luzPorciento = 0;
 
 void setup() {
+  pinMode(DOOR_OUT,OUTPUT);
+  pinMode(ALARM_OUT,OUTPUT);
+  pinMode(LED_LIGHT_OUT,OUTPUT);
+  pinMode(LED_GREEN_OUT,OUTPUT);
+  pinMode(LED_RED_OUT,OUTPUT);
+  pinMode(LED_PIR_OUT,OUTPUT); // PIR Testigo
+
+  pinMode(PIR_IN,INPUT);
+  pinMode(LDR_IN,INPUT);
+  pinMode(BUTTON_IN,INPUT);
+  pinMode(DOOR_IN,INPUT);
+
+  
   // put your setup code here, to run once:
   SPI.begin();        //Iniciamos el Bus SPI
   mfrc522.PCD_Init(); // Iniciamos  el MFRC522
+   softSerial.begin(9600);
+  Serial.begin(9600);
+/*
+   if (wifi.setOprToStationSoftAP()) {
+      Serial.print("to station + softap ok\r\n");
+   }
+   else {
+      Serial.print("to station + softap err\r\n");
+   }
+ 
+   if (wifi.joinAP(SSIDNAME, PASSWORD)) {
+      Serial.print("Join AP success\r\n");
+
+   }
+   else {
+      Serial.print("Join AP failure\r\n");
+   }
+ 
+   if (wifi.disableMUX()) {
+      Serial.print("single ok\r\n");
+   }
+   else {
+      Serial.print("single err\r\n");
+   }
+  */
+   delay(5000);
+   Serial.print(F("setup end\r\n"));
 }
 
 void loop() {
-
-  unsigned long currentMillis = millis();
+  digitalWrite(LED_PIR_OUT, digitalRead(PIR_IN));
+  bool lectPuerta = digitalRead(DOOR_IN);
+  bool lectBotonPuerta = digitalRead(BUTTON_IN);
+  currentMillis = millis();
   // Leo si tengo alguna tarjeta para leer
+  //Serial.println("Preparo para la lectura");
   String lectura = leerRFID(mfrc522);
   if(lectura.length() > 1){
+    
+   // Serial.print("Recibi desde el main:\r\n");
     if(consultarRFID(lectura)){
+     // Serial.print("Debo abrir la puerta\r\n");      
+      //Serial.println(lectura);
       desbloquearPuerta();
-      puertaDesbloqueada = true;
+      
+    }else{
+      //Serial.print("NO debo abrir la puerta\r\n");
     }
   }
+delay(200);
+  if(lectBotonPuerta){
+    desbloquearPuerta();
+  }
 
-  if(false){ //paso el tiempo para revisar las acciones
+  if(pasoTiempoRecibirAcciones()){ //paso el tiempo para revisar las acciones
+    actionReciveMillis = currentMillis;
     if(consultarAccionesRemotas(accionesExternas)){
       if(accionesExternas[0] == 1 && !puertaDesbloqueada){
-        desbloquearPuerta();
-        puertaDesbloqueada = true;
+        desbloquearPuerta(); 
       }
       if(accionesExternas[1]> -1 ){
-        manejarLuz(accionesExternas[1]);
+        luzPorciento = (byte)accionesExternas[1];
+        manejarLuz(luzPorciento);
       }
     }
-  }
-
-  if(false){ //paso el tiempo para enviar informacion de sensores
     leerSensores();
   }
+/*
+  if(pasoTiempoEnviarSensores()){ //paso el tiempo para enviar informacion de sensores
+    sensorSendMillis = currentMillis;
+//    leerSensores();
+  }
+*/
 
-  bool lectPuerta = digitalRead(DOOR_IN);
 
   if(puertaDesbloqueada){
     
@@ -104,21 +151,31 @@ void loop() {
       if(lectPuerta){ // si justo se abrio la puerta cuando se penso que estaba cerrada
         puertaAbierta = true;
         bloquearPuerta();
-        puertaDesbloqueada = false
+        
       }
     } 
-    if(false){ // si despues de un tiempo de estar desbloqueada la puerta la bloqueamos
-        bloquearPuerta();
-        puertaDesbloqueada = false
+    if(pasoTiempoDoorUnlock()){ // si despues de un tiempo de estar desbloqueada la puerta la bloqueamos
+        bloquearPuerta();      
     }
     
   }
-
-  if(puertaAbierta && false){ //si despues de un tiempo de estar la puerta abierta hacemos sonar la alarma
+  if(lectPuerta){ // si la puerta esta actualmente abierta
+  
+  if(!sirenaSonando && pasoTiempoDoorUnlock()){ //y despues de un tiempo de estar la puerta desbloqueada y la alarma no esta sonando hacemos sonar la alarma
     //suena alarma
+    digitalWrite(ALARM_OUT, HIGH);
+    sirenaSonando = true;
   }
 
-  
+  } else{
+    if(sirenaSonando){ //y la sirena suena apagamos la puerta
+      digitalWrite(ALARM_OUT, LOW);
+      sirenaSonando = false;
+      puertaAbierta = false;
+    }else{
+      puertaAbierta = false;
+    }
+  }
 
   
 
