@@ -1,6 +1,8 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
+const AccessModel = require('../models').Access;
+const LogModel = require('../models').Log;
 const tarjetas = [{
     id: '20d23ca8'
 }, {
@@ -9,15 +11,32 @@ const tarjetas = [{
 
 
 router.get('/access/:id', function(req, res) {
-    let tarjetasHabilitadas = tarjetas.filter((tarjetaElem) => {
-        return tarjetaElem.id === req.params.id;
-    });
-    
-    if(tarjetasHabilitadas.length) {
+    AccessModel.findOne({
+        card: req.params.id
+    })
+    .then((dataCard) => {
+        console.log('dataCard', dataCard);
+        
+        if(dataCard) {
+            let newLog = new LogModel({
+                card: dataCard._id
+            });
+
+            return newLog.save();
+        }
+
+        throw new Error('unauthorized');
+    })
+    .then((logSaved) => {
+        console.log('New Access, card Nº: ' + logSaved.card + ' At: ' + logSaved.createdAt);        
         res.status(200).send(true);
-    } else {
-        res.status(401).send(false);
-    }
+    })
+    .catch((err) => {
+        if (err) {
+            console.error(err);            
+            res.status(401).send(false);
+        }
+    });
 });
 
 module.exports = router;
