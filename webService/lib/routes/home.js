@@ -3,20 +3,12 @@ const express = require('express');
 const router = express.Router();
 const AccessModel = require('../models').Access;
 const LogModel = require('../models').Log;
-const tarjetas = [{
-    id: '20d23ca8'
-}, {
-    id: '2eadba79'
-}]
-
 
 router.get('/access/:id', function(req, res) {
     AccessModel.findOne({
         card: req.params.id
     })
     .then((dataCard) => {
-        console.log('dataCard', dataCard);
-        
         if(dataCard) {
             let newLog = new LogModel({
                 card: dataCard._id
