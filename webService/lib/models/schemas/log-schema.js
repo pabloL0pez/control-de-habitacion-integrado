@@ -6,8 +6,13 @@ var accessSchema = new Schema({
     card: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: 'Access'        
-    }
+        ref: 'Access'
+    },
+    action: {
+        type: String,
+        enum: ['change-luminosity', 'access-room']
+    },
+    value: String
 }, {
     timestamps: true
 });
@@ -15,7 +20,7 @@ var accessSchema = new Schema({
 
 accessSchema.pre('save', function(next) {
     console.log('pre save');
-    next();    
+    next();
 });
 
 module.exports = accessSchema;

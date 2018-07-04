@@ -13,7 +13,6 @@ Ejecutar los siguientes comandos en la terminal para poner en marcha el webservi
 ### Endpoints
 
 * GET /api/access :Obtiene los ids de las tarjetas que pueden acceder
-* GET /access/[cardId] :Dice si se puede acceder o no
 * POST /api/access :Utilizado para la creacion de la tarjeta, enviar un json con el siguiente formato
 ```json
 {
@@ -35,5 +34,16 @@ Ejecutar los siguientes comandos en la terminal para poner en marcha el webservi
     "value": "[nivel de luminosidad]"
 }
 ```
+* GET /luminosidad (Para arduino)
+
+RESPONSE
+|-1| para apagado
+|45| para los distintos niveles (el valor entre pipes es entre 0 y 100)
+
+* GET /access/[cardId] :Dice si se puede acceder o no (Para Arduino)
+
+RESPONSE
+|0| para false
+|1| para true
 
 
