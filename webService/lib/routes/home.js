@@ -4,8 +4,33 @@ const router = express.Router();
 const AccessModel = require('../models').Access;
 const LogModel = require('../models').Log;
 const ConfigModel = require('../models').Config;
+router.get('/arduino/luminosidad', function(req, res) {
+    ConfigModel.findOne({
+        label: 'luminosidad'
+    })
+    .then((dataLuminosidad) => {
+        if(dataLuminosidad) {
+            res.status(200).send('|' + dataLuminosidad.value + '|');
+        }
+    })
+    .catch((err) => {
+        if (err) {
+            console.error(err);
+            res.status(200).send('|-1|');
+        }
+    });
+});
 
-router.get('/access/:id', function(req, res) {
+router.get('/arduino/abrirpuerta', function(req, res) {
+    ConfigModel.findOne({
+        label: 'abrirpuerta'
+    })
+    .then((dataAbrirPuerta) => {
+        res.status(200).send('|' + dataAbrirPuerta.value + '|');
+    });
+});
+
+router.get('/arduino/:id', function(req, res) {
     AccessModel.findOne({
         card: req.params.id
     })
@@ -32,21 +57,10 @@ router.get('/access/:id', function(req, res) {
     });
 });
 
-router.get('/luminosidad', function(req, res) {
-    ConfigModel.findOne({
-        label: 'luminosidad'
-    })
-    .then((dataLuminosidad) => {
-        if(dataLuminosidad) {
-            res.status(200).send('|' + dataLuminosidad.value + '|');
-        }
-    })
-    .catch((err) => {
-        if (err) {
-            console.error(err);
-            res.status(200).send('|-1|');
-        }
-    });
+// sensores/ldr/movimiento(1 o 0)/porcentaje encendido de luz
+router.get('/sensores/:ldr/:movimiento/:encendidoLuz', function(req, res) {
+    console.log(req.params.ldr, req.params.movimiento, req.params.encendidoLuz);
+    res.status(200).send('ok');
 });
 
 module.exports = router;

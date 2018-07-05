@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var configSchema = new Schema({
     label: {
         type: String,
-        enum: ['luminosidad'],
+        enum: ['luminosidad', 'abrirpuerta'],
         unique: true
     },
     value: String
