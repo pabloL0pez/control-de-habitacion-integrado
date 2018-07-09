@@ -10,7 +10,10 @@ var accessSchema = new Schema({
     },
     action: {
         type: String,
-        enum: ['change-luminosity', 'access-room']
+        enum: [
+            'change-luminosity', 
+            'access-room'
+        ]
     },
     value: String
 }, {

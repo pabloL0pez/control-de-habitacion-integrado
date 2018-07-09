@@ -19,24 +19,25 @@ import java.net.URL;
 import static android.content.ContentValues.TAG;
 
 public class AsyncTaskTest extends AsyncTask<String, Void, String> {
+    protected String URL = "http://192.168.1.36/";
 
     @Override
     protected String doInBackground(String... params) {
         String JsonResponse = null;
-        String JsonDATA = params[0];
+        String JsonDATA = params[2];
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         try {
             URL url = null;
             try {
-                url = new URL("http://192.168.0.72:3000/access/");
+                url = new URL(this.URL + params[0]);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
             // is output buffer writter
-            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestMethod(params[1]);
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Accept", "application/json");
             //set headers and method
