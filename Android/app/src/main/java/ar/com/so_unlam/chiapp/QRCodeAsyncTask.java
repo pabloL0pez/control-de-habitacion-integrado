@@ -13,7 +13,7 @@ class QRCodeAsyncTask extends AsyncTask<String, Void, Integer> {
     private String valor;
     private Context context;
 
-    public QRCodeAsyncTask(Context context, Intent intent) {
+    protected QRCodeAsyncTask(Context context, Intent intent) {
         this.context = context;
         this.intent = intent;
     }
@@ -22,10 +22,9 @@ class QRCodeAsyncTask extends AsyncTask<String, Void, Integer> {
     protected Integer doInBackground(String... valores) {
         try {
             valor = valores[0];
-            URL urlObj = new URL("http://192.168.0.7:3000/access/" + valor);
+            URL urlObj = new URL("http://192.168.0.72:3000/access/" + valor);
             HttpURLConnection urlConnection = (HttpURLConnection) urlObj.openConnection();
-            int code = urlConnection.getResponseCode();
-            return code;
+            return urlConnection.getResponseCode();
         } catch (Exception e) {
             Log.e("error", e.toString());
         }
@@ -34,11 +33,11 @@ class QRCodeAsyncTask extends AsyncTask<String, Void, Integer> {
 
     @Override
     protected void onPostExecute(Integer result) {
-        if (result == 200) {
+        if (result == HttpURLConnection.HTTP_OK) {
             intent.putExtra("codigoQr", valor);
             intent.putExtra("habitacion", valor);
         }
-        else if (result == 401) {
+        else if (result == HttpURLConnection.HTTP_UNAUTHORIZED) {
             intent.putExtra("codigoQr", "Código inválido");
         }
         else {
