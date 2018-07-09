@@ -177,7 +177,7 @@ return -1000; // hubo un problema
 }
 
 void leerSensores(){
-  String request = String("GET /sensores/"+String(analogRead(LDR_IN))+"/"+digitalRead(PIR_IN)+"/"+luzPorciento+"/HTTP/1.1\r\nHost: 192.168.1.37\r\nConnection: close\r\n\r\n");
+  String request = String("GET /sensores/"+String(analogRead(LDR_IN))+"/"+digitalRead(PIR_IN)+"/"+luzPorciento+"/ HTTP/1.1\r\nHost: 192.168.1.37\r\nConnection: close\r\n\r\n");
   int retorno = sendWiFiRequest(request);
 }
 
