@@ -13,14 +13,17 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener{
 
     private SensorManager adminSensores; //
     private Switch switchLuz;
 
     // Variables para el acelerómetro.
-    private static final int UMBRAL_SACUDIDA = 70; // Velocidad mínima para ser considerada sacudida (m/s).
-    private static final int UMBRAL_ACTUALIZACION = 150; // Intervalo de tiempo para el cual se va a chequear una sacudida (mseg).
+    private static final int UMBRAL_SACUDIDA = 50; // Velocidad mínima para ser considerada sacudida (m/s).
+    private static final int UMBRAL_ACTUALIZACION = 200; // Intervalo de tiempo para el cual se va a chequear una sacudida (mseg).
     private long tiempoUltimaActualizacion;
     private float ultimoX;
     private float ultimoY;
@@ -162,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void funcionalidadAcelerometro(SensorEvent evento) {
         float x, y, z;
-        double moduloAceleracionAnterior, moduloAceleracionActual, velocidad;
+        double aceleracionAnterior, aceleracionActual, velocidad;
         long tiempoActual = System.currentTimeMillis();
         long diferenciaDeTiempo = tiempoActual - tiempoUltimaActualizacion;
 
@@ -174,10 +177,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             y = evento.values[1];
             z = evento.values[2];
 
-            moduloAceleracionActual = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-            moduloAceleracionAnterior = Math.sqrt(Math.pow(this.ultimoX, 2) + Math.pow(this.ultimoY, 2) + Math.pow(this.ultimoZ, 2));
+            aceleracionActual = x + y + z;
+            aceleracionAnterior = this.ultimoX + this.ultimoY + this.ultimoZ;
 
-            velocidad = Math.abs(moduloAceleracionActual - moduloAceleracionAnterior) / diferenciaDeTiempo * 1000;
+            velocidad = Math.abs(aceleracionActual - aceleracionAnterior) / diferenciaDeTiempo * 10000;
 
             if (velocidad > UMBRAL_SACUDIDA) {
                 desbloquearPuerta(velocidad);
@@ -196,19 +199,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         float valorMaximo = (float)-(Math.PI)*1/2;
         if (switchLuz.isChecked()) {
             if (anguloEnX < valorMaximo * 0 && anguloEnX > valorMaximo * 0.20) {
-                modificarIntensidadLuz((float) 0);
+                modificarIntensidadLuz(0);
             }
             if (anguloEnX < valorMaximo * 0.20 && anguloEnX > valorMaximo * 0.40) {
-                modificarIntensidadLuz((float) 0.25);
+                modificarIntensidadLuz(25);
             }
             if (anguloEnX < valorMaximo * 0.40 && anguloEnX > valorMaximo * 0.60) {
-                modificarIntensidadLuz((float) 0.50);
+                modificarIntensidadLuz(50);
             }
             if (anguloEnX < valorMaximo * 0.60 && anguloEnX > valorMaximo * 0.80) {
-                modificarIntensidadLuz((float) 0.75);
+                modificarIntensidadLuz(75);
             }
             if (anguloEnX < valorMaximo * 0.80 && anguloEnX > valorMaximo * 1.00) {
-                modificarIntensidadLuz((float) 1.0);
+                modificarIntensidadLuz(100);
             }
         }
     }
@@ -233,14 +236,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método enciende las luces de la habitación.
      */
     private void encenderLuces(float distancia) {
-        //Toast.makeText(this, "Sensor de proximidad: " + distancia, Toast.LENGTH_SHORT).show();
+        JSONObject jotaSon = new JSONObject();
+        try {
+            jotaSon.put("luminosidad", 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (jotaSon.length() > 0) {
+            new AsyncTaskTest().execute(String.valueOf(jotaSon));
+        }
     }
 
     /*
     Este método modifica el porcentaje de intensidad de las luces.
      */
     private void modificarIntensidadLuz(float porcentaje) {
-        Toast.makeText(this, "El porcentaje de intensidad de la luz es del " + porcentaje*100 + "%", Toast.LENGTH_SHORT).show();
+        JSONObject jotaSon = new JSONObject();
+        try {
+            jotaSon.put("luminosidad", "["+Float.toString(porcentaje)+"]");
+            //Toast.makeText(this, "El porcentaje de intensidad de la luz es del " + porcentaje + "%", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (jotaSon.length() > 0) {
+            new AsyncTaskTest().execute(String.valueOf(jotaSon));
+        }
     }
 }
 
