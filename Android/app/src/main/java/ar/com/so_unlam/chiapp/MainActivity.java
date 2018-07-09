@@ -238,7 +238,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void encenderLuces(float distancia) {
         JSONObject jotaSon = new JSONObject();
         try {
-            jotaSon.put("luminosidad", 1);
+			jotaSon.put("label", "luminosidad");
+            jotaSon.put("value", "100");
         } catch (JSONException e) {
             e.printStackTrace();
         }
