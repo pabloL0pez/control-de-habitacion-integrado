@@ -29,7 +29,7 @@ public class AsyncTaskTest extends AsyncTask<String, Void, String> {
         try {
             URL url = null;
             try {
-                url = new URL("http://192.168.0.72:3000/access/");
+                url = new URL("http://192.168.0.55:3000/access/");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -57,19 +57,15 @@ public class AsyncTaskTest extends AsyncTask<String, Void, String> {
             while ((inputLine = reader.readLine()) != null)
                 buffer.append(inputLine + "\n");
             if (buffer.length() == 0) {
-                // Stream was empty. No point in parsing.
                 return null;
             }
             JsonResponse = buffer.toString();
-            //response data
-            Log.i(TAG,JsonResponse);
-            //send to post execute
+
             return JsonResponse;
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }

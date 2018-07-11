@@ -267,13 +267,3 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 }
 
-    /*
-     x = evento.values[0];
-     y = evento.values[1];
-     z = evento.values[2];
-
-     velocidad = Math.abs((x + y + z) - this.ultimoX - this.ultimoY - this.ultimoZ) / diferenciaDeTiempo * 10000;
-
-      Log.d("Acelerómetro", "Se detectó una sacudida con una velocidad de: " + velocidad);
-     */
-
