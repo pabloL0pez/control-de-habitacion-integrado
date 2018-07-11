@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -22,8 +23,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Switch switchLuz;
 
     // Variables para el acelerómetro.
-    private static final int UMBRAL_SACUDIDA = 50; // Velocidad mínima para ser considerada sacudida (m/s).
-    private static final int UMBRAL_ACTUALIZACION = 200; // Intervalo de tiempo para el cual se va a chequear una sacudida (mseg).
+    private static final int UMBRAL_SACUDIDA = 200; // Velocidad mínima para ser considerada sacudida (m/s).
+    private static final int UMBRAL_ACTUALIZACION = 500; // Intervalo de tiempo para el cual se va a chequear una sacudida (mseg).
     private long tiempoUltimaActualizacion;
     private float ultimoX;
     private float ultimoY;
@@ -195,24 +196,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método verifica el angulo de orientación en el eje X del teléfono y en base a esto define el porcentaje de intensidad que va a tener la luz.
      */
     private void funcionalidadOrientacion(SensorEvent evento) {
-        float anguloEnX = evento.values[0];
+        float anguloEnX = Math.abs(evento.values[1]);
         float valorMaximo = (float)-(Math.PI)*1/2;
+
         if (switchLuz.isChecked()) {
-            if (anguloEnX < valorMaximo * 0 && anguloEnX > valorMaximo * 0.20) {
-                modificarIntensidadLuz(0);
+            if(anguloEnX >= 0 && anguloEnX <= 100) {
+                modificarIntensidadLuz(Math.round(anguloEnX));
             }
-            if (anguloEnX < valorMaximo * 0.20 && anguloEnX > valorMaximo * 0.40) {
-                modificarIntensidadLuz(25);
-            }
-            if (anguloEnX < valorMaximo * 0.40 && anguloEnX > valorMaximo * 0.60) {
-                modificarIntensidadLuz(50);
-            }
-            if (anguloEnX < valorMaximo * 0.60 && anguloEnX > valorMaximo * 0.80) {
-                modificarIntensidadLuz(75);
-            }
-            if (anguloEnX < valorMaximo * 0.80 && anguloEnX > valorMaximo * 1.00) {
-                modificarIntensidadLuz(100);
-            }
+
         }
     }
 
@@ -220,8 +211,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método define que hace la aplicación al activarse el sensor de proximidad.
      */
     private void funcionalidadProximidad(SensorEvent evento) {
+        Log.d("intensidad",  String.valueOf(evento.values[0]));
         if (evento.values[0] > 1) {
-            encenderLuces(evento.values[0]);
+            modificarIntensidadLuz(100);
         }
     }
 
@@ -235,45 +227,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /*
     Este método enciende las luces de la habitación.
      */
-    private void encenderLuces(float distancia) {
+    private void modificarIntensidadLuz(Integer intensidad) {
         JSONObject jotaSon = new JSONObject();
         try {
-			jotaSon.put("label", "luminosidad");
-            jotaSon.put("value", "100");
+            jotaSon.put("value", String.valueOf(intensidad));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        if (jotaSon.length() > 0) {
-            new AsyncTaskTest().execute(String.valueOf(jotaSon));
-        }
-    }
-
-    /*
-    Este método modifica el porcentaje de intensidad de las luces.
-     */
-    private void modificarIntensidadLuz(float porcentaje) {
-        JSONObject jotaSon = new JSONObject();
-        try {
-            jotaSon.put("luminosidad", "["+Float.toString(porcentaje)+"]");
-            //Toast.makeText(this, "El porcentaje de intensidad de la luz es del " + porcentaje + "%", Toast.LENGTH_SHORT).show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String[] parameters = {"api/configs/5b3c48f8caaafe0bf38279c6", "PUT", String.valueOf(jotaSon)};
 
         if (jotaSon.length() > 0) {
-            new AsyncTaskTest().execute(String.valueOf(jotaSon));
+            new AsyncTaskTest().execute(parameters);
         }
     }
 }
-
-    /*
-     x = evento.values[0];
-     y = evento.values[1];
-     z = evento.values[2];
-
-     velocidad = Math.abs((x + y + z) - this.ultimoX - this.ultimoY - this.ultimoZ) / diferenciaDeTiempo * 10000;
-
-      Log.d("Acelerómetro", "Se detectó una sacudida con una velocidad de: " + velocidad);
-     */
 
