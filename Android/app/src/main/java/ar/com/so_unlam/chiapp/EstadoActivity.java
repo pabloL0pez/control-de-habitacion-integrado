@@ -16,15 +16,16 @@ public class EstadoActivity extends AppCompatActivity {
 
     private void getLog(float distancia) {
         JSONObject jotaSon = new JSONObject();
-        try {
-            jotaSon.put("label", "luminosidad");
-            jotaSon.put("value", "100");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            jotaSon.put("value", String.valueOf());
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+        String[] parameters = {"api/configs/5b3c48f8caaafe0bf38279c6", "GET"};
 
         if (jotaSon.length() > 0) {
-            new AsyncTaskTest().execute(String.valueOf(jotaSon));
+            AsyncTask asyncTask = new AsyncTaskTest().execute(parameters);
         }
     }
 }

@@ -37,12 +37,21 @@ router.get('/arduino/:id', function(req, res) {
     .then((dataCard) => {
         if(dataCard) {
             let newLog = new LogModel({
-                card: dataCard._id
+                card: dataCard._id,
+                action: 'access_room',
+                value: 'valid'
             });
 
             return newLog.save();
-        }
+        } 
 
+        let newLog = new LogModel({
+            card: dataCard._id,
+            action: 'access_room',
+            value: 'invalid'
+        });
+
+        newLog.save();
         throw new Error('unauthorized');
     })
     .then((logSaved) => {
