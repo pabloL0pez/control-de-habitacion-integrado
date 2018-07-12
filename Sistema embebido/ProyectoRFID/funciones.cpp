@@ -7,6 +7,7 @@
 uint8_t buffer[700] = { 0 };
 
 void desbloquearPuerta(){
+  Serial.print(F("!!!!!!!!!!Puerta Desbloqueada!!!!!!!!!!!!!!!!1\r\n"));
   digitalWrite(DOOR_OUT, HIGH);
   doorUnlockMillis = currentMillis;
   puertaDesbloqueada = true;
@@ -32,11 +33,11 @@ bool pasoTiempoDoorUnlock(){
 
 bool pasoTiempoEnviarSensores(){
   //return currentMillis - sensorSendMillis > TIME_INTERVAL_INFO;
-  return currentMillis - actionReciveMillis > TIME_INTERVAL_ACTION;
+  return millis() - actionReciveMillis > TIME_INTERVAL_ACTION;
 }
 
 bool pasoTiempoRecibirAcciones(){
-  return currentMillis - actionReciveMillis > TIME_INTERVAL_ACTION;
+  return (currentMillis - actionReciveMillis) > TIME_INTERVAL_ACTION;
 }
 
 String leerRFID(MFRC522 mfrc522){
@@ -70,60 +71,27 @@ bool consultarRFID(String idTarjeta){
   if(retorno == 1)
     return true;
   return false;
-/*  
-  if (wifi.createTCP(HOST_NAME, HOST_PORT)) {
-      //Serial.print("create tcp ok\r\n");
-   }
-   else {
-      Serial.print("create tcp err\r\n");
-      return false;
-   }
- 
-   String request = String("GET /arduino/"+idTarjeta+"/ HTTP/1.1\r\nHost: 192.168.1.37\r\nConnection: close\r\n\r\n");
 
-   wifi.send((const uint8_t*)request.c_str(), request.length());
- 
-   uint32_t len = wifi.recv(buffer, sizeof(buffer), 10000);
-   if (len > 0) 
-   {
-      //Serial.print("Received:\r\n");
-      for (uint32_t i = 0; i < len; i++) 
-      {
-         char c = (char)buffer[i];
-         //Serial.print(c);
-         if (c == '|')
-         {
-          if ((char)buffer[i + 1] == '1'){
-            return true;
-          }else{
-            return false;
-          }
-         }
-      }
-      //Serial.print("\r\n");
-      
-}
-return false;*/
 }
 
 
 bool consultarAccionesRemotas(int accionesExternas[2]){
-
+int retorno =-1;
   //return true;
   //consulto por abrir la puerta
-
-  int retorno = sendWiFiRequest( F("GET /arduino/abrirpuerta/ HTTP/1.1\r\nHost: 192.168.1.37\r\nConnection: close\r\n\r\n"));
+  Serial.print(F("Debo abrir puerta\r\n"));
+  retorno = sendWiFiRequest( F("GET /arduino/abrirpuerta/ HTTP/1.1\r\nHost: 192.168.1.37\r\nConnection: close\r\n\r\n"));
   //Serial.println("termino consultar si abre la puerta");
   if(retorno < 0){
     accionesExternas[0] = -1;
   }
   accionesExternas[0] = retorno;
-  delay(300);
+  //delay(300);
   
   
   
   //consulto por la luz
-
+Serial.print(F("Debo encender la luz\r\n"));
   retorno = sendWiFiRequest(F("GET /arduino/luminosidad/ HTTP/1.1\r\nHost: 192.168.1.37\r\nConnection: close\r\n\r\n"));
   if(retorno < 0){
     accionesExternas[1] = -1;
@@ -147,7 +115,7 @@ int sendWiFiRequest(String request){
 
    wifi.send((const uint8_t*)request.c_str(), request.length());
  
-   uint32_t len = wifi.recv(buffer, sizeof(buffer), 10000);
+   uint32_t len = wifi.recv(buffer, sizeof(buffer), 2000);
    
    if (len > 0) 
    {
@@ -177,6 +145,7 @@ return -1000; // hubo un problema
 }
 
 void leerSensores(){
+  Serial.print(F("Voy a leer sensores\r\n"));
   String request = String("GET /sensores/"+String(analogRead(LDR_IN))+"/"+digitalRead(PIR_IN)+"/"+luzPorciento+"/ HTTP/1.1\r\nHost: 192.168.1.37\r\nConnection: close\r\n\r\n");
   int retorno = sendWiFiRequest(request);
 }
