@@ -28,7 +28,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/logs"
                 android:layout_width="match_parent"
                 android:layout_height="233dp"
                 android:text="01/01/01 01:01:01 RFID#0001 HAB#001\n02/02/02 02:02:02 RFID#0002 HAB#002" />

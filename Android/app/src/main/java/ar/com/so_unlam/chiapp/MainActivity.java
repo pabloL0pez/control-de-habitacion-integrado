@@ -30,11 +30,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float ultimoX;
     private float ultimoY;
     private float ultimoZ;
-    private String habitacion;
     private Boolean isFirstTime = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String habitacion;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("CHIApp");
