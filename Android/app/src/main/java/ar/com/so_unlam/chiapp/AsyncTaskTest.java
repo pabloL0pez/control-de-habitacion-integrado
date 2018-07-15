@@ -19,16 +19,18 @@ import java.net.URL;
 import static android.content.ContentValues.TAG;
 
 public class AsyncTaskTest extends AsyncTask<String, Void, String> {
-    protected String URL = "http://192.168.0.55:3000/";
+    protected String URL = "http://192.168.1.37/";
 
     @Override
     protected String doInBackground(String... params) {
+        Log.d("do asynccc", "true");
         String JsonResponse = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         try {
             URL url = null;
             try {
+                Log.d("urlkl", this.URL + params[0]);
                 url = new URL(this.URL + params[0]);
             } catch (MalformedURLException e) {
                 e.printStackTrace();

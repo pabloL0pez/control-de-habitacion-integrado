@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float ultimoY;
     private float ultimoZ;
     private String habitacion;
+    private Boolean isFirstTime = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,12 +198,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método verifica el angulo de orientación en el eje X del teléfono y en base a esto define el porcentaje de intensidad que va a tener la luz.
      */
     private void funcionalidadOrientacion(SensorEvent evento) {
-        float anguloEnX = Math.abs(evento.values[1]);
+        float anguloEnY = Math.abs(evento.values[1]);
         float valorMaximo = (float)-(Math.PI)*1/2;
 
         if (switchLuz.isChecked()) {
-            if(anguloEnX >= 0 && anguloEnX <= 100) {
-                modificarIntensidadLuz(Math.round(anguloEnX));
+            if(anguloEnY >= 0 && anguloEnY <= 100 && evento.values[1] < 0) {
+                modificarIntensidadLuz(Math.round(anguloEnY));
+            } else if(anguloEnY > 100) {
+                modificarIntensidadLuz(100);
+            } else if(evento.values[1] > 0) {
+                modificarIntensidadLuz(0);
+
             }
 
         }
@@ -211,10 +218,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Este método define que hace la aplicación al activarse el sensor de proximidad.
      */
     private void funcionalidadProximidad(SensorEvent evento) {
-        Log.d("intensidad",  String.valueOf(evento.values[0]));
-        if (evento.values[0] > 1) {
-            modificarIntensidadLuz(100);
+        if (!this.isFirstTime && evento.values[0] < 30) {
+            toggleLuz();
         }
+
+        this.isFirstTime = false;
     }
 
     /*
@@ -222,11 +230,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void desbloquearPuerta(double velocidad) {
         Toast.makeText(this, "Se detectó una sacudida con una velocidad de: " + velocidad, Toast.LENGTH_SHORT).show();
+        JSONObject jotaSon = new JSONObject();
+        try {
+            jotaSon.put("value", "1");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String[] parameters = {"api/configs/5b3d5abced34b412053c07c1", "PUT", String.valueOf(jotaSon)};
+
+        if (jotaSon.length() > 0) {
+            new AsyncTaskTest().execute(parameters);
+        }
     }
 
     /*
     Este método enciende las luces de la habitación.
      */
+    private void prenderLuz() {
+        JSONObject jotaSon = new JSONObject();
+        try {
+            jotaSon.put("value", "1");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String[] parameters = {"toggleLuz", "PUT", String.valueOf(jotaSon)};
+
+        if (jotaSon.length() > 0) {
+            Log.d("fafafa", "true");
+            AsyncTask asyncTest =  new AsyncTaskTest().execute(parameters);
+        }
+    }
+
     private void modificarIntensidadLuz(Integer intensidad) {
         JSONObject jotaSon = new JSONObject();
         try {
@@ -238,7 +274,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String[] parameters = {"api/configs/5b3c48f8caaafe0bf38279c6", "PUT", String.valueOf(jotaSon)};
 
         if (jotaSon.length() > 0) {
-            new AsyncTaskTest().execute(parameters);
+            AsyncTask asyncTest =  new AsyncTaskTest().execute(parameters);
+        }
+    }
+    private void toggleLuz() {
+        JSONObject jotaSon = new JSONObject();
+        try {
+            jotaSon.put("value", "1");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String[] parameters = {"toggleLuz", "PUT", String.valueOf(jotaSon)};
+
+        if (jotaSon.length() > 0) {
+            AsyncTask asyncTest =  new AsyncTaskTest().execute(parameters);
         }
     }
 }

@@ -30,6 +30,20 @@ router.get('/arduino/abrirpuerta', function(req, res) {
     });
 });
 
+router.post('/toggleLuz' , function(req, res) {
+    console.log('aca');
+    ConfigModel.findOne({
+        label: 'luminosidad'
+    })
+    .then((dataAbrirPuerta) => {
+        if(dataAbrirPuerta.value >= 1) {
+            dataAbrirPuerta.value = 0;
+        }
+        dataAbrirPuerta.save();
+        res.status(200).send('|' + dataAbrirPuerta.value + '|');
+    });
+});
+
 router.get('/arduino/:id', function(req, res) {
     AccessModel.findOne({
         card: req.params.id

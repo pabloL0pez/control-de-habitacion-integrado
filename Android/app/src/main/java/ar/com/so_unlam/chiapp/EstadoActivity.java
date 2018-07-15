@@ -13,19 +13,4 @@ public class EstadoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estado);
     }
-
-    private void getLog(float distancia) {
-        JSONObject jotaSon = new JSONObject();
-//        try {
-//            jotaSon.put("value", String.valueOf());
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
-        String[] parameters = {"api/configs/5b3c48f8caaafe0bf38279c6", "GET"};
-
-        if (jotaSon.length() > 0) {
-            AsyncTask asyncTask = new AsyncTaskTest().execute(parameters);
-        }
-    }
 }
