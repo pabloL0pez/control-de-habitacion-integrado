@@ -109,7 +109,7 @@ void loop() {
   String lectura = leerRFID(mfrc522);
   if(lectura.length() > 1){
     
-   // Serial.print("Recibi desde el main:\r\n");
+    Serial.print(F("Tarjeta Leida\r\n"));
     if(consultarRFID(lectura)){
      // Serial.print("Debo abrir la puerta\r\n");      
       //Serial.println(lectura);
@@ -125,7 +125,7 @@ delay(200);
   }
 
   if(pasoTiempoRecibirAcciones()){ //paso el tiempo para revisar las acciones
-    actionReciveMillis = currentMillis;
+    actionReciveMillis = millis();
     if(consultarAccionesRemotas(accionesExternas)){
       if(accionesExternas[0] == 1 && !puertaDesbloqueada){
         desbloquearPuerta(); 
