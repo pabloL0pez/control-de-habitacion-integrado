@@ -30,7 +30,7 @@ router.get('/arduino/abrirpuerta', function(req, res) {
     });
 });
 
-router.post('/toggleLuz' , function(req, res) {
+router.put('/toggleLuz' , function(req, res) {
     console.log('aca');
     ConfigModel.findOne({
         label: 'luminosidad'
@@ -38,9 +38,21 @@ router.post('/toggleLuz' , function(req, res) {
     .then((dataAbrirPuerta) => {
         if(dataAbrirPuerta.value >= 1) {
             dataAbrirPuerta.value = 0;
+        } else {
+            dataAbrirPuerta.value = 1;
         }
-        dataAbrirPuerta.save();
+        console.log('dataAbrirPuerta', dataAbrirPuerta)
+        dataAbrirPuerta.save()
+        .then((dataSaved) => {
+            console.log('dataSaved',dataSaved)
+        })
+        .catch((err) => {
+            console.log('err', err);
+        });
         res.status(200).send('|' + dataAbrirPuerta.value + '|');
+    })
+    .catch((err) => {
+        console.log('err', err);
     });
 });
 
@@ -57,7 +69,7 @@ router.get('/arduino/:id', function(req, res) {
             });
 
             return newLog.save();
-        } 
+        }
 
         let newLog = new LogModel({
             card: dataCard._id,

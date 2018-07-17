@@ -19,7 +19,24 @@ import java.net.URL;
 import static android.content.ContentValues.TAG;
 
 public class AsyncTaskTest extends AsyncTask<String, Void, String> {
-    protected String URL = "http://192.168.1.37/";
+    protected String URL = "http://192.168.0.55:3000/";
+
+    private OnFetchFinishedListener listener;
+
+    // the listener interface
+    public interface OnFetchFinishedListener {
+        void onFetchFinished(String result);
+    }
+
+    // getting a listener instance from the constructor
+    public AsyncTaskTest(OnFetchFinishedListener listener) {
+        this.listener = listener;
+    }
+
+    @Override protected void onPostExecute(String result) {
+        Log.d("result", result);
+        listener.onFetchFinished(result);
+    }
 
     @Override
     protected String doInBackground(String... params) {
@@ -30,19 +47,20 @@ public class AsyncTaskTest extends AsyncTask<String, Void, String> {
         try {
             URL url = null;
             try {
-                Log.d("urlkl", this.URL + params[0]);
                 url = new URL(this.URL + params[0]);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoOutput(true);
+
             // is output buffer writter
+            Log.d("method", params[1]);
             urlConnection.setRequestMethod(params[1]);
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Accept", "application/json");
             //set headers and method
             if(params[2] != null) {
+                urlConnection.setDoOutput(true);
                 Writer writer = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
                 writer.write(params[2]);
                 // json data
@@ -84,7 +102,4 @@ public class AsyncTaskTest extends AsyncTask<String, Void, String> {
         return null;
     }
 
-    @Override
-    protected void onPostExecute(String s) {
-    }
 }

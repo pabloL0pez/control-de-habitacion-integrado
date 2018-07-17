@@ -240,7 +240,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String[] parameters = {"api/configs/5b3d5abced34b412053c07c1", "PUT", String.valueOf(jotaSon)};
 
         if (jotaSon.length() > 0) {
-            new AsyncTaskTest().execute(parameters);
+            new AsyncTaskTest(new AsyncTaskTest.OnFetchFinishedListener() {
+                @Override
+                public void onFetchFinished(String result) {
+                    Log.d("result after", result);
+                }
+            }).execute(parameters);
         }
     }
 
@@ -250,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void prenderLuz() {
         JSONObject jotaSon = new JSONObject();
         try {
-            jotaSon.put("value", "1");
+            jotaSon.put("value", "100");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -258,8 +263,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String[] parameters = {"toggleLuz", "PUT", String.valueOf(jotaSon)};
 
         if (jotaSon.length() > 0) {
-            Log.d("fafafa", "true");
-            AsyncTask asyncTest =  new AsyncTaskTest().execute(parameters);
+            new AsyncTaskTest(new AsyncTaskTest.OnFetchFinishedListener() {
+                @Override
+                public void onFetchFinished(String result) {
+                    Log.d("result after", result);
+                }
+            }).execute(parameters);
         }
     }
 
@@ -274,13 +283,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String[] parameters = {"api/configs/5b3c48f8caaafe0bf38279c6", "PUT", String.valueOf(jotaSon)};
 
         if (jotaSon.length() > 0) {
-            AsyncTask asyncTest =  new AsyncTaskTest().execute(parameters);
+            new AsyncTaskTest(new AsyncTaskTest.OnFetchFinishedListener() {
+                @Override
+                public void onFetchFinished(String result) {
+                    Log.d("result after", result);
+                }
+            }).execute(parameters);
         }
     }
     private void toggleLuz() {
         JSONObject jotaSon = new JSONObject();
         try {
-            jotaSon.put("value", "1");
+            jotaSon.put("value", "100");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -288,7 +302,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String[] parameters = {"toggleLuz", "PUT", String.valueOf(jotaSon)};
 
         if (jotaSon.length() > 0) {
-            AsyncTask asyncTest =  new AsyncTaskTest().execute(parameters);
+            new AsyncTaskTest(new AsyncTaskTest.OnFetchFinishedListener() {
+                @Override
+                public void onFetchFinished(String result) {
+                    Log.d("result after", result);
+                }
+            }).execute(parameters);
         }
     }
 }
