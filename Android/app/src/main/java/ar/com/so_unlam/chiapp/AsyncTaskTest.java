@@ -19,7 +19,7 @@ import java.net.URL;
 import static android.content.ContentValues.TAG;
 
 public class AsyncTaskTest extends AsyncTask<String, Void, String> {
-    protected String URL = "http://192.168.0.55:3000/";
+    protected String URL = "http://192.168.1.37/";
 
     private OnFetchFinishedListener listener;
 

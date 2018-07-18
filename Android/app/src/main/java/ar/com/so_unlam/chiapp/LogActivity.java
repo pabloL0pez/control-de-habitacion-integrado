@@ -29,7 +29,7 @@ public class LogActivity extends AppCompatActivity {
         logs = findViewById(R.id.logs);
         logsString = new StringBuilder();
 
-        String[] parametros = {"api/logs?populate=card", "GET", null}; // Servirá el mismo método que usamos para hacer los put? Porque en los parámetros mandamos un JSON y ahora no hace falta porque es un GET
+        String[] parametros = {"api/logs?populate=card&sort=-createdAt", "GET", null}; // Servirá el mismo método que usamos para hacer los put? Porque en los parámetros mandamos un JSON y ahora no hace falta porque es un GET
         new AsyncTaskTest(new AsyncTaskTest.OnFetchFinishedListener() {
             @Override
             public void onFetchFinished(String result) {
@@ -39,7 +39,7 @@ public class LogActivity extends AppCompatActivity {
                     for (int i = 0; i < obj.length(); i++) {
                         JSONObject cardDataObj = obj.getJSONObject(i);
                         Log.d("res", cardDataObj.getJSONObject("card").get("card").toString());
-                        logsString.append("rfid: " + cardDataObj.getJSONObject("card").get("card").toString() + " Fecha: " + cardDataObj.getJSONObject("card").get("createdAt").toString() + "\n");
+                        logsString.append("rfid: " + cardDataObj.getJSONObject("card").get("card").toString() + " Fecha: " + cardDataObj.get("createdAt").toString() + "\n");
 
                     }
 

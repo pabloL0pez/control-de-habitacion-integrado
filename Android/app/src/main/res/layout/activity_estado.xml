@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Porcentaje de luminosidad"
         android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,5 +28,23 @@
         android:text="-"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/luzEnHabitacion"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_marginTop="8dp"
+        android:text="LDR"
+        app:layout_constraintTop_toBottomOf="@+id/etiquetaLuz"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/hayMovimiento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Movimiento"
+        app:layout_constraintTop_toBottomOf="@+id/luzEnHabitacion"
+        tools:layout_editor_absoluteX="16dp" />
 
 </android.support.constraint.ConstraintLayout>
